@@ -111,7 +111,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" className="hidden rounded-full text-slate-100 hover:bg-white/10 hover:text-white sm:inline-flex">
-              <Link href="/sign-in">Sign In</Link>
+              <a href="#panels">Sign In</a>
             </Button>
             <Button asChild className="rounded-full bg-white text-slate-950 hover:bg-cyan-100">
               <Link href="/sign-up">Get Started</Link>
