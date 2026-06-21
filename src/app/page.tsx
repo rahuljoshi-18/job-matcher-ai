@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, type MouseEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
@@ -81,6 +81,43 @@ const proofStats: Array<{ value: string; label: string; icon: LucideIcon }> = [
   { value: '24/7', label: 'platform monitoring', icon: Activity },
 ];
 
+function scrollToPanels(event: MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault();
+
+  const target = document.getElementById('panels');
+  if (!target) return;
+
+  const targetTop = target.getBoundingClientRect().top + window.scrollY;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo(0, targetTop);
+    window.history.pushState(null, '', '#panels');
+    return;
+  }
+
+  const startTop = window.scrollY;
+  const distance = targetTop - startTop;
+  const duration = 500;
+  const startTime = performance.now();
+
+  const animate = (currentTime: number) => {
+    const progress = Math.min((currentTime - startTime) / duration, 1);
+    const easedProgress = progress < 0.5
+      ? 4 * progress ** 3
+      : 1 - (-2 * progress + 2) ** 3 / 2;
+
+    window.scrollTo(0, startTop + distance * easedProgress);
+
+    if (progress < 1) {
+      window.requestAnimationFrame(animate);
+    } else {
+      window.history.pushState(null, '', '#panels');
+    }
+  };
+
+  window.requestAnimationFrame(animate);
+}
+
 export default function Home() {
   const router = useRouter();
   const { user: clerkUser } = useUser();
@@ -111,7 +148,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" className="hidden rounded-full text-slate-100 hover:bg-white/10 hover:text-white sm:inline-flex">
-              <a href="#panels">Sign In</a>
+              <a href="#panels" onClick={scrollToPanels}>Sign In</a>
             </Button>
             <Button asChild className="rounded-full bg-white text-slate-950 hover:bg-cyan-100">
               <Link href="/sign-up">Get Started</Link>
@@ -140,7 +177,7 @@ export default function Home() {
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
-                  <a href="#panels">Explore Panels</a>
+                  <a href="#panels" onClick={scrollToPanels}>Explore Panels</a>
                 </Button>
               </div>
             </div>
