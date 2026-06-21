@@ -9,6 +9,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DIRECT_URL"],
+    // Prefer an unpooled connection for migrations, but allow environments
+    // such as Vercel to build when only DATABASE_URL is configured.
+    url: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
   },
 });
